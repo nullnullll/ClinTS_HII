@@ -14,30 +14,23 @@ parser.add_argument('--lr', type=float, default=0.0001)
 parser.add_argument('--rec-hidden', type=int, default=128)
 parser.add_argument('--embed-time', type=int, default=128)
 parser.add_argument('--save', type=int, default=1)
-parser.add_argument('--enc', type=str, default='oneGRU')
 parser.add_argument('--seed', type=int, default=0)
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--n', type=int, default=8000)
 parser.add_argument('--batch-size', type=int, default=128)
-parser.add_argument('--quantization', type=float, default=0.016,
-                    help="Quantization on the physionet dataset.")
-parser.add_argument('--classif', action='store_true',
-                    help="Include binary classification loss")
-parser.add_argument('--learn-emb', action='store_true')
 parser.add_argument('--num-heads', type=int, default=4)
 parser.add_argument('--device', type=int, default=0)
-parser.add_argument('--linear-combine', action='store_true')
 parser.add_argument('--alpha', type=int, default=5.)
 parser.add_argument('--with-treatment', action='store_true')
 parser.add_argument('--causal-masking', action='store_true')
 parser.add_argument('--sample-times', type=int, default=3)
 parser.add_argument('--least-winsize', type=float, default=0.2)
-parser.add_argument('--masked-ratio', type=float, default=0.2)
 parser.add_argument('--early-stop', type=int, default=15)
 parser.add_argument('--task', type=str, default='in_hospital_mortality')
 parser.add_argument('--cip', type=str, default='vaso')
 parser.add_argument('--withoutheter', action='store_true')
 parser.add_argument('--withoutirr', action='store_true')
+parser.add_argument('--withoutint', action='store_true')
 
 args = parser.parse_args()
 
@@ -67,7 +60,7 @@ if __name__ == '__main__':
     val_loader = data_obj["val_dataloader"]
     dim = data_obj["input_dim"]
 
-    # model
+
     rec = models.make_Encoder_GRU(args, dim).to(device)
     dec = models.make_Decoder_GRU(args, dim).to(device)
     if args.task == 'cip':

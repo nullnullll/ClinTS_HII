@@ -17,41 +17,22 @@ parser.add_argument('--seed', type=int, default=0)
 parser.add_argument('--split', type=int, default=0)
 parser.add_argument('--n', type=int, default=8000)
 parser.add_argument('--batch-size', type=int, default=128)
-parser.add_argument('--quantization', type=float, default=0.016,
-                    help="Quantization on the physionet dataset.")
-parser.add_argument('--classif', action='store_true',
-                    help="Include binary classification loss")
-parser.add_argument('--learn-emb', action='store_true')
 parser.add_argument('--num-heads', type=int, default=4)
 parser.add_argument('--device', type=int, default=0)
-parser.add_argument('--linear-combine', action='store_true')
 parser.add_argument('--alpha', type=int, default=5.)
 parser.add_argument('--with-treatment', action='store_true')
 parser.add_argument('--causal-masking', action='store_true')
 parser.add_argument('--sample-times', type=int, default=3)
-parser.add_argument('--least-winsize', type=float, default=0.8)
-parser.add_argument('--masked-ratio', type=float, default=0.5)
+parser.add_argument('--least-winsize', type=float, default=0.2)
 parser.add_argument('--early-stop', type=int, default=15)
 parser.add_argument('--task', type=str, default='in_hospital_mortality')
 parser.add_argument('--cip', type=str, default='vaso')
 parser.add_argument('--withoutheter', action='store_true')
 parser.add_argument('--withoutirr', action='store_true')
+parser.add_argument('--withoutint', action='store_true')
 
 args = parser.parse_args()
-args.niters=10
-args.lr=0.0001
-args.alpha=5
-args.batch_size=32
-args.rec_hidden=128
-args.save=1
-args.classif=True
-args.num_heads=4
-args.learn_emb=True
-args.dataset = 'mimiciii'
-args.seed=0
-args.with_treatment = True
-args.sample_times = 3
-args.task = 'in_hospital_mortality'
+
 
 
 if __name__ == '__main__':
@@ -79,7 +60,6 @@ if __name__ == '__main__':
     vitals_dim = 12
     event_dim =13
 
-    # model
 
     rec = models.make_Encoder_GRU(args, dim).to(device)
     dec = models.make_Decoder_GRU(args, vitals_dim).to(device)
@@ -222,7 +202,7 @@ if __name__ == '__main__':
                 'dec_point_process_dict':dec_point_process_dict,
                 'optimizer_state_dict': optimizer_state_dict,
                 'classifier_state_dict': classifier_state_dict,
-            }, '../checkpoint' + args.task + '/' + 'GRU-CTM-irr' + '_' + str(args.seed) + '.h5')
+            }, save_path + name + '.h5')
 
     print(best_test_auroc)
     print(best_test_auprc)

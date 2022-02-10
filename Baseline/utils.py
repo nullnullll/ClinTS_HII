@@ -82,11 +82,11 @@ def get_data_objects(train_data_x, val_data_x, test_data_x, train_data_y, val_da
     return data_objects
 
 def get_mimiciii_data(args):
-    x = np.load('/home/covpreduser/Blob/v-chong/pycharm_projects/mTAN/final_input_event_50000.npy', allow_pickle=True)
-    y = np.load('/home/covpreduser/Blob/v-chong/pycharm_projects/mTAN/final_output_event_50000.npy', allow_pickle=True)
+    x = np.load('../Dataset/in_hospital_mortality/input.npy', allow_pickle=True)
+    y = np.load('../Dataset/in_hospital_mortality/output.npy', allow_pickle=True)
     if args.with_treatment:
         input_dim = 25
-        x = x[:1000, :51]
+        x = x[:, :51]
     else:
         input_dim = 12
         x_1 = x[:, :12]
@@ -94,8 +94,8 @@ def get_mimiciii_data(args):
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
-        x = x[:1000, :25]
-    y = y[:1000]
+        x = x[:, :25]
+    y = y[:]
 
     x = np.transpose(x, (0, 2, 1))
     # normalize values and time
@@ -113,8 +113,8 @@ def get_mimiciii_data(args):
     return data_objects
 
 def get_decom_data(args):
-    x = np.load('../Dataset/decom_13w/input.npy', allow_pickle=True)
-    y = np.load('../Dataset/decom_13w/output.npy', allow_pickle=True)
+    x = np.load('../Dataset/decom/input.npy', allow_pickle=True)
+    y = np.load('../Dataset/decom/output.npy', allow_pickle=True)
     if args.with_treatment:
         input_dim = 25
         x = x[:, :51]
@@ -262,16 +262,15 @@ def evaluation_matrics(pred, true ):
     return matrics
 
 def getFileNameandPath(args):
-    name = args.enc + '_'
-    save_path = '../checkpoint/'
-    if args.with_treatment:
-        name += 'with_treatment_'
-        if args.causal_masking:
-            name += 'causal_mask_'
-        save_path += args.enc + '_with_treatment/'
-    else:
-        save_path += args.enc+ '/'
-    name += args.task  + '_' + str(args.seed)
+    save_path = '../checkpoint/' + args.task + '/'
+    name = 'GRU-CTM'+'_'
+    if args.withoutheter:
+        name +=  'heter_'
+    if args.withoutirr:
+        name += 'irr_'
+    if args.withoutint:
+        name += 'int_'
+    name +=  str(args.seed)
     return name,save_path
 
 def mean_squared_error(orig, pred):
