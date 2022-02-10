@@ -1,0 +1,5 @@
+numpy
+sklearn==0.2
+torch==1.4.0
+pickle
+psycopg2
