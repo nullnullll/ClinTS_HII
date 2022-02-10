@@ -82,11 +82,11 @@ def get_data_objects(train_data_x, val_data_x, test_data_x, train_data_y, val_da
     return data_objects
 
 def get_mimiciii_data(args):
-    x = np.load('../Dataset/in_hospital_mortality/input.npy', allow_pickle=True)
-    y = np.load('../Dataset/in_hospital_mortality/output.npy', allow_pickle=True)
+    x = np.load('/home/covpreduser/Blob/v-chong/pycharm_projects/mTAN/final_input_event_50000.npy', allow_pickle=True)
+    y = np.load('/home/covpreduser/Blob/v-chong/pycharm_projects/mTAN/final_output_event_50000.npy', allow_pickle=True)
     if args.with_treatment:
         input_dim = 25
-        x = x[:, :51]
+        x = x[:1000, :51]
     else:
         input_dim = 12
         x_1 = x[:, :12]
@@ -94,8 +94,8 @@ def get_mimiciii_data(args):
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
-        x = x[:, :25]
-    y = y[:]
+        x = x[:1000, :25]
+    y = y[:1000]
 
     x = np.transpose(x, (0, 2, 1))
     # normalize values and time

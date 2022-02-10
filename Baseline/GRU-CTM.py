@@ -38,7 +38,20 @@ parser.add_argument('--withoutheter', action='store_true')
 parser.add_argument('--withoutirr', action='store_true')
 
 args = parser.parse_args()
-
+args.niters=10
+args.lr=0.0001
+args.alpha=5
+args.batch_size=32
+args.rec_hidden=128
+args.save=1
+args.classif=True
+args.num_heads=4
+args.learn_emb=True
+args.dataset = 'mimiciii'
+args.seed=0
+args.with_treatment = True
+args.sample_times = 3
+args.task = 'in_hospital_mortality'
 
 
 if __name__ == '__main__':
