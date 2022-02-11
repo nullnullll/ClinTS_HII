@@ -85,12 +85,12 @@ def get_mimiciii_data(args):
     x = np.load('../Dataset/in_hospital_mortality/input.npy', allow_pickle=True)
     y = np.load('../Dataset/in_hospital_mortality/output.npy', allow_pickle=True)
     if args.with_treatment:
-        input_dim = 25
-        x = x[:, :51]
+        input_dim = 23
+        x = x[:, :47]
     else:
         input_dim = 12
         x_1 = x[:, :12]
-        x_2 = x[:, 25:37]
+        x_2 = x[:, 23:35]
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
@@ -116,12 +116,12 @@ def get_decom_data(args):
     x = np.load('../Dataset/decom/input.npy', allow_pickle=True)
     y = np.load('../Dataset/decom/output.npy', allow_pickle=True)
     if args.with_treatment:
-        input_dim = 25
-        x = x[:, :51]
+        input_dim = 23
+        x = x[:, :47]
     else:
         input_dim = 12
         x_1 = x[:, :12]
-        x_2 = x[:, 25:37]
+        x_2 = x[:, 23:35]
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
@@ -149,12 +149,12 @@ def get_cip_data(args):
     elif args.cip == 'vent':
         y = np.load('../Dataset/cip/vent_output.npy', allow_pickle=True)
     if args.with_treatment:
-        input_dim = 25
-        x = x[:, :51]
+        input_dim = 23
+        x = x[:, :47]
     else:
         input_dim = 12
         x_1 = x[:, :12]
-        x_2 = x[:, 25:37]
+        x_2 = x[:, 23:35]
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
@@ -182,12 +182,12 @@ def get_los_data(args):
     x = np.load('../Dataset/los/input.npy', allow_pickle=True)
     y = np.load('../Dataset/los/output.npy', allow_pickle=True)
     if args.with_treatment:
-        input_dim = 25
-        x = x[:, :51]
+        input_dim = 23
+        x = x[:, :47]
     else:
         input_dim = 12
         x_1 = x[:, :12]
-        x_2 = x[:, 25:37]
+        x_2 = x[:, 23:35]
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
@@ -213,12 +213,12 @@ def get_wbm_data(args):
     x = np.load('../Dataset/wbm/input.npy', allow_pickle=True)
     y = np.load('../Dataset/wbm/output.npy', allow_pickle=True)
     if args.with_treatment:
-        input_dim = 25
-        x = x[:, :51]
+        input_dim = 23
+        x = x[:, :47]
     else:
         input_dim = 12
         x_1 = x[:, :12]
-        x_2 = x[:, 25:37]
+        x_2 = x[:, 23:35]
         x_3 = x[:, -1]
         x_3 = x_3[:, np.newaxis, :]
         x = np.concatenate((x_1, x_2, x_3), axis=1)
@@ -296,7 +296,7 @@ def evaluate_classifier(rec,dec, test_loader, args, classifier=None, dim=12, dev
         if args.with_treatment:
             if args.causal_masking:
                 causal_mask = get_causal_mask(observed_mask, observed_tp, dim, device)
-                causal_mask = causal_mask[:, :, :, 12:25]
+                causal_mask = causal_mask[:, :, :, 12:23]
             else:
                 causal_mask = None
         else:
@@ -335,7 +335,7 @@ def evaluate_classifier_cip(rec,dec, test_loader, args, classifier=None, dim=12,
         if args.with_treatment:
             if args.causal_masking:
                 causal_mask = get_causal_mask(observed_mask, observed_tp, dim, device)
-                causal_mask = causal_mask[:, :, :, 12:25]
+                causal_mask = causal_mask[:, :, :, 12:23]
             else:
                 causal_mask = None
         else:
@@ -387,7 +387,7 @@ def evaluate_classifier_wbm(rec,dec, test_loader, args, classifier=None, dim=12,
         if args.with_treatment:
             if args.causal_masking:
                 causal_mask = get_causal_mask(observed_mask, observed_tp, dim, device)
-                causal_mask = causal_mask[:, :, :, 12:25]
+                causal_mask = causal_mask[:, :, :, 12:23]
             else:
                 causal_mask = None
         else:

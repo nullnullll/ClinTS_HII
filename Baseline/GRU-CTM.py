@@ -58,7 +58,7 @@ if __name__ == '__main__':
     val_loader = data_obj["val_dataloader"]
     dim = data_obj["input_dim"]
     vitals_dim = 12
-    event_dim =13
+    event_dim =11
 
 
     rec = models.make_Encoder_GRU(args, dim).to(device)
@@ -107,7 +107,7 @@ if __name__ == '__main__':
             if args.with_treatment:
                 if args.causal_masking:
                     causal_mask = utils.get_causal_mask(observed_mask, observed_tp, dim, device)
-                    causal_mask = causal_mask[:, :, :, 12:25]
+                    causal_mask = causal_mask[:, :, :, 12:23]
                 else:
                     causal_mask = None
             else:

@@ -108,7 +108,7 @@ class enc_mtan_GRU_withoutirr(nn.Module):
         self.ENCmTAN = multiTimeAttention(input_dim, embed_time, num_heads)
         self.encoder = nn.GRU(embed_time, nhidden, bidirectional=True, batch_first=True)
 
-        self.embedding = nn.Linear(25, embed_time, bias=False)
+        self.embedding = nn.Linear(23, embed_time, bias=False)
 
         self.periodic = nn.Linear(1, embed_time - 1)
         self.linear = nn.Linear(1, 1)

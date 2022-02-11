@@ -306,10 +306,7 @@ for id in range(len(list_adm_id)):
     )
     patient.append(cur.fetchall())
 
-
     data.append(patient)
-
-
 
 
 pickle.dump(data, open('patient_records.p', 'wb'))
