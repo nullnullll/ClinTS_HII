@@ -35,7 +35,7 @@ python Baseline/GRU-CTM.py --withoutirr --task in_hospital_mortality --niters 20
 ```
 4. In-Hospital Mortality Task (GRU-CTM(-Int.))
 ```bash
-python Baseline/GRU-CTM(-Int.).py --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --with-treatment --causal-masking --seed 0
+python Baseline/GRU-CTM(-Int.).py --withoutint --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --with-treatment --causal-masking --seed 0
 ```
 
 
