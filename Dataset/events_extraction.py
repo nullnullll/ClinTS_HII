@@ -168,4 +168,4 @@ for id in range(len(list_adm_id)):
     vitals.append(cur.fetchall())
 
     data.append(vitals)
-pickle.dump(data, open('event_records3.p', 'wb'))
+pickle.dump(data, open('event_records.p', 'wb'))

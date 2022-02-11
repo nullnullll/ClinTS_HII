@@ -13,7 +13,7 @@ list_adm_id = cur.fetchall()
 cur.execute("select hadm_id, admission_type, trunc(extract(epoch from " +
             "dischtime- admittime)/3600), hospital_expire_flag from admissions ")
 length_of_stay = cur.fetchall()
-pickle.dump(length_of_stay, open('all_adm.p', 'wb'))
+pickle.dump(length_of_stay, open('adm_type_los_mortality.p', 'wb'))
 
 
 data = []
@@ -163,4 +163,4 @@ for id in range(len(list_adm_id)):
                 "or itemid =" + str(228243) + ") order by charttime")
     vitals.append(cur.fetchall())
     data.append(vitals)
-pickle.dump(data, open('all_vitals_records.p', 'wb'))
+pickle.dump(data, open('vitals_records.p', 'wb'))
