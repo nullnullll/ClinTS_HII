@@ -12,10 +12,9 @@ pip install -r requirements.txt
 
 ## Obtaining Data
 For the dataset of tasks defined in our benchmark, first you need to have an access to MIMIC-III Dataset which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
-Once the database has been created, run the data extraction scripts and data pre-processing scripts in order.
+Once the database has been created, run the data extraction and data pre-processing scripts in order.
 ```bash
-python Dataset/vitals_extraction.py
-python Dataset/events_extraction.py
+python Dataset/data_extraction.py
 ```
 
 ## Training and Evaluation
