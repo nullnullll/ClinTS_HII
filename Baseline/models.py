@@ -2,7 +2,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from transformer import MultiHeadedAttention, PositionwiseFeedForward, Encoder, EncoderLayer
+from Baseline.transformer import MultiHeadedAttention, PositionwiseFeedForward, Encoder, EncoderLayer
 import copy
 
 class enc_mtan_GRU(nn.Module):
