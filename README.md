@@ -11,8 +11,18 @@ pip install -r requirements.txt
 
 
 ## Obtaining Data
-For the dataset of tasks defined in our benchmark, first you need to have an access to MIMIC-III Dataset which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
-Once the database has been created, run the data extraction script.
+
+### 0. Prepare
+
+1. First you need to have an access to MIMIC-III Dataset which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
+2. Download the MIMIC-III Clinical Database and place the MIMIC-III Clinical Database as either .csv or .csv.gz files somewhere on your local computer.
+3. Install Postgres, you need to make sure that Postgres is installed. For installation, please refer to: http://www.postgresql.org/download/
+
+### 1. Create MIMIC-III in a local Postgres database
+   Then you can follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
+
+### 2. Generate datasets
+   Once the database has been created, run the data extraction script.
 ```bash
 python Dataset/data_extraction.py
 ```
