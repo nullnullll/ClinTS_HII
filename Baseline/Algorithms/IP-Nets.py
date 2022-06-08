@@ -23,14 +23,14 @@ from keras.models import Model
 ap = argparse.ArgumentParser()
 ap.add_argument("-g", "--gpus", type=int, default=4,
                 help="# of GPUs to use for training")
-ap.add_argument("-batch", "--batch_size", type=int, default=256,
+ap.add_argument("-batch", "--batch_size", type=int, default=32,
                 help="# batch size to use for training")
 ap.add_argument("-e", "--epochs", type=int, default=100,
                 help="# of epochs for training")
 ap.add_argument("-ref", "--reference_points", type=int,
                 default=192, help="# of reference points")
 ap.add_argument("-units", "--hidden_units", type=int,
-                default=100, help="# of hidden units")
+                default=32, help="# of hidden units")
 ap.add_argument("-hfadm", "--hours_from_adm", type=int,
                 default=48, help="Hours of record to look at")
 ap.add_argument('--task', type=str, default='in_hospital_mortality')
@@ -244,8 +244,8 @@ def interp_net():
 
 if __name__ == '__main__':
 
-    x = np.load('../Dataset/'+args.task+'/input.npy', allow_pickle=True)
-    y = np.load('../Dataset/'+args.task+'/output.npy', allow_pickle=True)
+    x = np.load('../../Dataset/'+args.task+'/input.npy', allow_pickle=True)
+    y = np.load('../../Dataset/'+args.task+'/output.npy', allow_pickle=True)
 
     print(x.shape, y.shape)
     timestamp = x.shape[2]

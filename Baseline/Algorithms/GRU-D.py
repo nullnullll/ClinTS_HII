@@ -17,7 +17,7 @@ from sklearn.metrics import roc_curve, auc, roc_auc_score
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--epochs', type=int, default=100)
-parser.add_argument('--lr', type=float, default=0.01)
+parser.add_argument('--lr', type=float, default=0.001)
 parser.add_argument('--seed', type=int, default=1)
 parser.add_argument('--task', type=str, default='in_hospital_mortality')
 
@@ -649,8 +649,8 @@ def data_dataloader(dataset, outcomes, \
     return train_dataloader, dev_dataloader, test_dataloader
 
 if __name__ == '__main__':
-    x = np.load('../Dataset/'+args.task+'/input.npy', allow_pickle=True)
-    y = np.load('../Dataset/'+args.task+'/output.npy', allow_pickle=True)
+    x = np.load('../../Dataset/'+args.task+'/input.npy', allow_pickle=True)
+    y = np.load('../../Dataset/'+args.task+'/output.npy', allow_pickle=True)
 
     x = x[:, :47]
     y = y[:]
@@ -680,7 +680,7 @@ if __name__ == '__main__':
     nor_mean, nor_median, nor_std, nor_var = normalize_chk(x)
 
     input_size = 23
-    hidden_size = 23
+    hidden_size = 128
     output_size = 1
     num_layers = 50
 

@@ -34,8 +34,8 @@ def parse_datasets(args, device):
 
 
 	input_dim = 23
-	x = np.load('../Dataset/' + args.task + '/input.npy', allow_pickle=True)
-	y = np.load('../Dataset/' + args.task + '/output.npy', allow_pickle=True)
+	x = np.load('../../../Dataset/' + args.task + '/input.npy', allow_pickle=True)
+	y = np.load('../../../Dataset/' + args.task + '/output.npy', allow_pickle=True)
 
 	x = np.transpose(x, (0, 2, 1))
 

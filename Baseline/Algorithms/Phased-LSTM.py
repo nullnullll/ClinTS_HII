@@ -190,25 +190,25 @@ class PLSTM(nn.Module):
 
 class Net(nn.Module):
 
-    def __init__(self, inp_dim=1, hidden_dim=23, use_lstm=True):
+    def __init__(self, inp_dim=23, hidden_dim=128, use_lstm=True):
         super(Net, self).__init__()
         self.hidden_dim = hidden_dim
         self.use_lstm = use_lstm
         if args.task == 'cip':
             self.classifier = torch.nn.Sequential(
-                torch.nn.Linear(23, 4),
+                torch.nn.Linear(hidden_dim, 4),
                 torch.nn.Sigmoid())
         elif args.task == 'wbm':
             self.classifier = torch.nn.Sequential(
-                torch.nn.Linear(23, 12),
+                torch.nn.Linear(hidden_dim, 12),
                 torch.nn.Sigmoid())
         elif args.task == 'los':
             self.classifier = torch.nn.Sequential(
-                torch.nn.Linear(23, 9),
+                torch.nn.Linear(hidden_dim, 9),
                 torch.nn.Sigmoid())
         else:
             self.classifier = torch.nn.Sequential(
-                torch.nn.Linear(23, 2),
+                torch.nn.Linear(hidden_dim, 2),
                 torch.nn.Sigmoid())
 
         if use_lstm:
