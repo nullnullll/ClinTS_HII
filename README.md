@@ -1,10 +1,20 @@
 # ClinTS-HII: A Clinical Time-series Benchmark Targeting Heterogeneity, Irregularity, and Interdependency
 
-Source code for our paper (link forthcoming) defining a benchmark system considering the intrinsic characteristics of EHR data for clinical therapeutics modeling
+![HII-Benchmark](./doc/img/example.png)
+
+This repository maintains all the documentation and needed scripts to build the ClinTS-HII benchmark.
+
+It has been divided into the following folders:
+
+- **preprocess**: 
+   - ```data-extraction.py```: data extraction script.
+   - ```data-preprocessing.ipynb```: task building script.
+- **baselines**: containing executable codes of baseline models.
+- **data**: containing the data extracted from MIMIC-III.
+- **evaluation**: containing evaluation scripts. (under construction :construction:)
 
 ## Requirements
-The code requires Python 3.7 or later. The file [requirements.txt](requirements.txt) contains the full list of
-required Python modules.
+The code requires Python 3.7 or later. The file [requirements.txt](requirements.txt) contains the full list of required Python modules.
 ```bash
 pip install -r requirements.txt
 ```
@@ -24,28 +34,28 @@ pip install -r requirements.txt
 ### 2. Generate datasets
    Once the database has been created, run the data extraction script.
 ```bash
-python Dataset/data_extraction.py
+python preprocess/data_extraction.py
 ```
-After that, read [Data Preprocessing Notebook](Dataset/data-preprocessing.ipynb) for data preprocessing
+After that, read [Data Preprocessing Notebook](preprocess/data-preprocessing.ipynb) for data preprocessing
 
 ## Training and Evaluation
 
-1. In-Hospital Mortality Task (GRU-CTM)
+1. In-Hospital Mortality Task (GRU-HII)
 ```bash
-python Baseline/GRU-CTM.py --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --causal-masking --seed 0
+python baselines/GRU-HII/GRU-HII.py --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --causal-masking --seed 0
 ```
-2. In-Hospital Mortality Task (GRU-CTM(-Het.))
+2. In-Hospital Mortality Task (GRU-HII(-Het.))
 ```bash
-python Baseline/GRU-CTM.py --withoutheter --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --seed 0
+python baselines/GRU-HII/GRU-HII.py --withoutheter --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --seed 0
 ```
 
-3. In-Hospital Mortality Task (GRU-CTM(-Irr.))
+3. In-Hospital Mortality Task (GRU-HII(-Irr.))
 ```bash
-python Baseline/GRU-CTM.py --withoutirr --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --seed 0
+python baselines/GRU-HII/GRU-HII.py --withoutirr --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --seed 0
 ```
-4. In-Hospital Mortality Task (GRU-CTM(-Int.))
+4. In-Hospital Mortality Task (GRU-HII(-Int.))
 ```bash
-python Baseline/GRU-CTM(-Int.).py --withoutint --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --with-treatment --causal-masking --seed 0
+python baselines/GRU-HII/GRU-HII(-Int.).py --withoutint --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --with-treatment --causal-masking --seed 0
 ```
 
 

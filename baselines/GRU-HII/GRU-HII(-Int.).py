@@ -160,7 +160,7 @@ if __name__ == '__main__':
                 'dec_state_dict': dec_state_dict,
                 'optimizer_state_dict': optimizer_state_dict,
                 'classifier_state_dict': classifier_state_dict,
-            }, '../checkpoint' + args.task + '/' + 'GRU-CTM-irr' + '_' + str(args.seed) + '.h5')
+            }, '../checkpoint' + args.task + '/' + 'GRU-HII-irr' + '_' + str(args.seed) + '.h5')
 
     print(best_test_auroc)
     print(best_test_auprc)

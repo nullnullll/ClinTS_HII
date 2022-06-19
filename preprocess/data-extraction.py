@@ -309,4 +309,4 @@ for id in range(len(list_adm_id)):
     data.append(patient)
 
 
-pickle.dump(data, open('patient_records.p', 'wb'))
+pickle.dump(data, open('./data/patient_records.p', 'wb'))
