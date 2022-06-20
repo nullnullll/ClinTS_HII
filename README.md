@@ -60,7 +60,7 @@
 
    ### 0. Access to MIMIC-III data
 
-   1. First you need to have an access to MIMIC-III Dataset, which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
+   1. First you need to have an access to MIMIC-III Dataset, which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). The database version we used here is v1.4.
    2. Download the MIMIC-III Clinical Database and place the MIMIC-III Clinical Database as either .csv or .csv.gz files somewhere on your local computer.
 
    ### 1. Create MIMIC-III in a local Postgres database
@@ -83,6 +83,13 @@
       ```
 
    You can also read [data-preprocessing.ipynb](preprocess/data-preprocessing.ipynb) for more data processing and task statistics details.
+
+   ### Data splitting
+   For each task, we randomly split 20% of the collected data into the testing set, 20% of the remaining part into the validation set, and left the rest for the training set.
+   After building the tasks, please run the following command for data splitting.
+   ```bash
+   python ./preprocess/data_split.py --path path/to/task_data_folder/
+   ```
 
 ## Baselines
 
