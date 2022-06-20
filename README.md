@@ -1,12 +1,24 @@
 # ClinTS-HII: A Clinical Time-series Benchmark Targeting Heterogeneity, Irregularity, and Interdependency
 
-## About
-
 ![HII-Benchmark](./doc/img/example.png)
 
-This repository maintains all the documentation and needed scripts to build the ClinTS-HII benchmark.
+## About
 
-It has been divided into the following folders:
+To support the comprehensive modeling of the *heterogeneity*, *irregularity*, and *interdependency* characteristics of ClinTS, we build a new benchmark, named **ClinTS-HII**.
+This repository maintains all the documentation and needed scripts to build the ClinTS-HII benchmark.
+We selected 12 common biomarker variables to indicate the physiological states of a patient and 11 widely used interventions in intensive care units to represent the major events interdependent on these physiological states. 
+
+This benchmark includes a diverse set of clinical tasks covering different clinical scenarios for evaluation. The following table summarizes the statistics of these tasks.
+
+|  Task (Abbr.)   | Type  | # Train | # Val. | # Test | Clinical Scenario |
+|  :----  | :----: | ----: | ----: | ----: | :---- |
+| In-hospital Mortality (MOR) | BC | 34, 054 | 8, 541 | 10, 643 | Early warning |
+| Decompensation (DEC)        | BC | 87, 006 | 21, 752 | 27, 190 | Outcome pred. |
+| Length Of Stay (LOS)        | MC | 299, 706 | 74, 927 | 93, 659 | Outcome pred. |
+| Next Timepoint Will Be Measured (WBM) | ML | 274, 278 | 68, 570 | 85, 712 | Treatment recom. |
+| Clinical Intervention Prediction (CIP) | MC | 175, 557 | 43, 890 | 54, 862 | Treatment recom. |
+
+This repository has been divided into the following folders:
 
 - **preprocess**: 
    - ```data-extraction.py```: data extraction script.
@@ -15,63 +27,114 @@ It has been divided into the following folders:
 - **data**: containing the data extracted from MIMIC-III.
 - **evaluation**: containing evaluation scripts. (under construction :construction:)
 
-## Requirements
+## Setup
+
+### Requirements
 
 Your local system should have the following executables:
 
+- [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
 - [PostreSQL](http://www.postgresql.org/download/)
 - Python 3.7 or later
 - git
 
-The file [requirements.txt](requirements.txt) contains the full list of required Python modules.
+### Create conda environment
+
+All instructions below should be executed from a terminal.
+
+1. clone this repository and run 
+```bash
+cd ClinTS_HII
+```
+2. creates an environment ```clints-hii```
+```bash
+conda env create -n clints-hii python=3.7
+```
+3. install the required Python modules using file [requirements.txt](requirements.txt)
 ```bash
 pip install -r requirements.txt
 ```
 
-
-## Obtaining Data
+## Download Data & Task Building
 
 ### 0. Access to MIMIC-III data
 
-1. First you need to have an access to MIMIC-III Dataset which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
-2. Download the MIMIC-III Clinical Database and place the MIMIC-III Clinical Database as either .csv or .csv.gz files somewhere on your local computer.
+   1. First you need to have an access to MIMIC-III Dataset which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
+   2. Download the MIMIC-III Clinical Database and place the MIMIC-III Clinical Database as either .csv or .csv.gz files somewhere on your local computer.
 
 ### 1. Create MIMIC-III in a local Postgres database
-   Pleae follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
+
+      Follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
+
 
 ### 2. Generate datasets
-   Once the database has been created, run the data extraction script.
-```bash
-python preprocess/data_extraction.py
-```
-After that, read [Data Preprocessing Notebook](preprocess/data-preprocessing.ipynb) for data preprocessing
+
+   Once the database has been created, run the data extraction script to extract vital signal and intervention features from MIMIC-III.
+
+   ```bash
+   python preprocess/data_extraction.py
+   ```
+
+   After that, read [Data Preprocessing Notebook](preprocess/data-preprocessing.ipynb) for data preprocessing
 
 ## Baselines
 
-### GRU-HII model
+### Custom training
 
-1. In-Hospital Mortality Task (GRU-HII)
-```bash
-python baselines/GRU-HII/GRU-HII.py --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --causal-masking --seed 0
-```
-2. In-Hospital Mortality Task (GRU-HII(-Het.))
-```bash
-python baselines/GRU-HII/GRU-HII.py --withoutheter --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --seed 0
-```
+   To run the GRU-HII baseline proposes in this paper, using the 
 
-3. In-Hospital Mortality Task (GRU-HII(-Irr.))
-```bash
-python baselines/GRU-HII/GRU-HII.py --withoutirr --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --least-winsize 0.5 --with-treatment --seed 0
-```
-4. In-Hospital Mortality Task (GRU-HII(-Int.))
-```bash
-python baselines/GRU-HII/GRU-HII(-Int.).py --withoutint --task in_hospital_mortality --niters 200 --alpha 5 --lr 0.0001 --batch-size 32 --rec-hidden 128 --num-heads 4 --sample-times 5 --with-treatment --causal-masking --seed 0
-```
+   ```bash
+   python baselines/GRU-HII/GRU-HII.py --task in_hospital_mortality \
+                                       --niters 200 --alpha 5 \
+                                       --lr 0.0001 --batch-size 32 \
+                                       --rec-hidden 128 --num-heads 4 \
+                                       --sample-times 5 --least-winsize 0.5 \
+                                       --causal-masking --seed 0
+   ```
 
-### Other models
-Under construction :construction:
+
+   - ```task```: the downstram task name, select from ```[in_hospital_mortality, decom, cip, wbm, los]```
+   - ```cip```: assigning the sub-tsak of CIP task if set ```--task cip```, select from ```[vent, vaso]```
+   - ```alpha```: the loss weight of downstream task
+   - ```rec-hidden```: the dimension of hidden states
+   - ```sample-times```: the number of sample times each batch to calculate log-likelihoods
+   - ```num-heads```: the number of attention head \
+   - ```least-winsize```: 
+   - ```causal-masking```: using causal mask to distinguish interventions and measurements or not.
+   - ```seed```: the seed for parameter initialization.
+
+### Reproduce experiments from the paper
+
+   If you are interested in reproducing the experiments from the paper, you can directly use the scripts in ```./baselines/```. 
+
+   - [AdaCare](https://github.com/Accountable-Machine-Intelligence/AdaCare)
+   - [HiTANet](https://github.com/HiTANet2020/HiTANet)
+   - [MUFASA](https://github.com/Google-Health/records-research/tree/master/multimodal-architecture-search)
+   - [SDPRL](https://epubs.siam.org/doi/abs/10.1137/1.9781611976700.66)
+   - [GRU-D](https://www.nature.com/articles/s41598-018-24271-9)
+      ```bash
+      python ./baselines/GRU-D.py --task [task_name] --seed [seed_num]
+      ```
+   - [Phased-LSTM](https://proceedings.neurips.cc/paper/2016/hash/5bce843dd76db8c939d5323dd3e54ec9-Abstract.html)
+      ```bash
+      python ./baselines/Phased-LSTM.py --task [task_name] --seed [seed_num]
+      ```
+   - [Latent-ODEs](https://github.com/YuliaRubanova/latent_ode)
+      ```bash
+      python ./baselines/latent-ode.py --task [task_name] --random-seed [seed_num]
+      ```
+   - [IP-Nets](https://github.com/mlds-lab/interp-net)
+      ```bash
+      python ./baselines/IP-Nets.py --task [task_name] --seed [seed_num]
+      ```
+   - [mTAN](https://github.com/reml-lab/mTAN)
+   - **GRU-HII**: 
+      ```bash
+      bash ./baselines/GRU-HII/run_gruhii.sh
+      ```
 
 ## Evaluation
+
 Under construction :construction:
 
 ## License

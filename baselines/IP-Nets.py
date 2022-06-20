@@ -34,6 +34,7 @@ ap.add_argument("-units", "--hidden_units", type=int,
 ap.add_argument("-hfadm", "--hours_from_adm", type=int,
                 default=48, help="Hours of record to look at")
 ap.add_argument('--task', type=str, default='in_hospital_mortality')
+ap.add_argument('--seed', type=int, default=0)
 
 args = vars(ap.parse_args())
 gpu_num = args["gpus"]
@@ -252,7 +253,7 @@ if __name__ == '__main__':
     num_features = x.shape[1] // 4
 
 
-    seed = 0
+    seed = args.seed
     results = {}
     results['loss'] = []
     results['auc'] = []
