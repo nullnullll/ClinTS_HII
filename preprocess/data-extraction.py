@@ -4,7 +4,7 @@ import psycopg2 as py
 
 # Replace this with your mimic iii database details
 conn = py.connect(
-    "dbname = 'mimic3' user = 'covpreduser' host = 'localhost' password = '2021' options='-c search_path=mimiciii' ")
+    "dbname = 'dbname' user = 'user_name' host = 'localhost' password = 'password' options='-c search_path=search_path' ")
 
 cur = conn.cursor()
 cur.execute("""select hadm_id from admissions """)
@@ -13,7 +13,7 @@ list_adm_id = cur.fetchall()
 cur.execute("select hadm_id, admission_type, trunc(extract(epoch from " +
             "dischtime- admittime)/3600), hospital_expire_flag from admissions ")
 length_of_stay = cur.fetchall()
-pickle.dump(length_of_stay, open('adm_type_los_mortality.p', 'wb'))
+pickle.dump(length_of_stay, open('./data/adm_type_los_mortality.p', 'wb'))
 
 
 data = []

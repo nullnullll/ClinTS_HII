@@ -48,35 +48,41 @@
    ```
    2. creates an environment ```clints-hii``` and activate it.
    ```bash
-   conda env create -n clints-hii python=3.7
+   conda create -n clints-hii python=3.7
    conda activate clints-hii
    ```
    3. install the required Python modules using file [requirements.txt](requirements.txt)
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirement.txt
    ```
+   Tips: If you cannot install psycopg2 successfully, please try ```sudo apt-get install libpq-dev``` first and then run the command ```pip install psycopg2```.
 
 ## Download Data & Task Building
 
-   ### 0. Access to MIMIC-III data
+   ### I. Access to MIMIC-III data
 
    1. First you need to have an access to MIMIC-III Dataset, which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). The database version we used here is v1.4.
    2. Download the MIMIC-III Clinical Database and place the MIMIC-III Clinical Database as either .csv or .csv.gz files somewhere on your local computer.
 
-   ### 1. Create MIMIC-III in a local Postgres database
+   ### II. Create MIMIC-III in a local Postgres database
 
    Follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
 
 
-   ### 2. Generate datasets
+   ### III. Generate datasets
 
-   1. Once the database has been created, run the data extraction script to extract vital signal and intervention features from MIMIC-III.
+   0. Once the database has been created, make sure the database server is running. Then, replace the connect information with your mimic iii database details first in file [data_extraction.py](./preprocess/data_extraction.py) (See [here](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) for more details).
       ```bash
-      python preprocess/data_extraction.py
+      conn = py.connect(
+      "dbname = 'dbname' user = 'user_name' host = 'localhost' password = 'password' options='-c search_path=search_path' ")
+      ```
+   1. Run the data extraction script to extract vital signal and intervention features from MIMIC-III.
+      ```bash
+      python ./preprocess/data-extraction.py
       ```
    2. To build CIP task, please obtain file ```all_hourly_data.h5``` from [MIMIC_Extract](https://github.com/MLforHealth/MIMIC_Extract) first, and place it in the ```./data/``` folder.
    3. Config PostgreSQL database parameters in file [data-preprocessing.py](./preprocess/data-preprocessing.py)
-   according to your configuration. See [here](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) for more details.
+   according to your configuration as in step 0.
    4. Run following command to build tasks:
       ```bash
       python ./preprocess/data-preprocessing.py
@@ -84,7 +90,7 @@
 
    You can also read [data-preprocessing.ipynb](preprocess/data-preprocessing.ipynb) for more data processing and task statistics details.
 
-   ### Data splitting
+   ### IV. Data splitting
    For each task, we randomly split 20% of the collected data into the testing set, 20% of the remaining part into the validation set, and left the rest for the training set.
    After building the tasks, please run the following command for data splitting.
    ```bash
