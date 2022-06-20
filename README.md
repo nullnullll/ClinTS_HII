@@ -70,13 +70,19 @@
 
    ### 2. Generate datasets
 
-   Once the database has been created, run the data extraction script to extract vital signal and intervention features from MIMIC-III.
+   1. Once the database has been created, run the data extraction script to extract vital signal and intervention features from MIMIC-III.
+      ```bash
+      python preprocess/data_extraction.py
+      ```
+   2. To build CIP task, please obtain file ```all_hourly_data.h5``` from [MIMIC_Extract](https://github.com/MLforHealth/MIMIC_Extract) first, and place it in the ```./data/``` folder.
+   3. Config PostgreSQL database parameters in file [data-preprocessing.py](./preprocess/data-preprocessing.py)
+   according to your configuration. See [here](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) for more details.
+   4. Run following command to build tasks:
+      ```bash
+      python ./preprocess/data-preprocessing.py
+      ```
 
-   ```bash
-   python preprocess/data_extraction.py
-   ```
-
-   After that, read [Data Preprocessing Notebook](preprocess/data-preprocessing.ipynb) for data preprocessing
+   You can also read [data-preprocessing.ipynb](preprocess/data-preprocessing.ipynb) for more data processing and task statistics details.
 
 ## Baselines
 
