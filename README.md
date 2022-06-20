@@ -4,70 +4,71 @@
 
 ## About
 
-To support the comprehensive modeling of the *heterogeneity*, *irregularity*, and *interdependency* characteristics of ClinTS, we build a new benchmark, named **ClinTS-HII**.
-This repository maintains all the documentation and needed scripts to build the ClinTS-HII benchmark.
-We selected 12 common biomarker variables to indicate the physiological states of a patient and 11 widely used interventions in intensive care units to represent the major events interdependent on these physiological states. 
+   To support the comprehensive modeling of the *heterogeneity*, *irregularity*, and *interdependency* characteristics of ClinTS, we build a new benchmark, named **ClinTS-HII**.
+   This repository maintains all the documentation and needed scripts to build the ClinTS-HII benchmark.
+   We selected 12 common biomarker variables to indicate the physiological states of a patient and 11 widely used interventions in intensive care units to represent the major events interdependent on these physiological states. 
 
-This benchmark includes a diverse set of clinical tasks covering different clinical scenarios for evaluation. The following table summarizes the statistics of these tasks.
+   This benchmark includes a diverse set of clinical tasks covering different clinical scenarios for evaluation. The following table summarizes the statistics of these tasks.
 
-|  Task (Abbr.)   | Type  | # Train | # Val. | # Test | Clinical Scenario |
-|  :----  | :----: | ----: | ----: | ----: | :---- |
-| In-hospital Mortality (MOR) | BC | 34, 054 | 8, 541 | 10, 643 | Early warning |
-| Decompensation (DEC)        | BC | 87, 006 | 21, 752 | 27, 190 | Outcome pred. |
-| Length Of Stay (LOS)        | MC | 299, 706 | 74, 927 | 93, 659 | Outcome pred. |
-| Next Timepoint Will Be Measured (WBM) | ML | 274, 278 | 68, 570 | 85, 712 | Treatment recom. |
-| Clinical Intervention Prediction (CIP) | MC | 175, 557 | 43, 890 | 54, 862 | Treatment recom. |
+   |  Task (Abbr.)   | Type  | # Train | # Val. | # Test | Clinical Scenario |
+   |  :----  | :----: | ----: | ----: | ----: | :---- |
+   | In-hospital Mortality (MOR) | BC | 34, 054 | 8, 541 | 10, 643 | Early warning |
+   | Decompensation (DEC)        | BC | 87, 006 | 21, 752 | 27, 190 | Outcome pred. |
+   | Length Of Stay (LOS)        | MC | 299, 706 | 74, 927 | 93, 659 | Outcome pred. |
+   | Next Timepoint Will Be Measured (WBM) | ML | 274, 278 | 68, 570 | 85, 712 | Treatment recom. |
+   | Clinical Intervention Prediction (CIP) | MC | 175, 557 | 43, 890 | 54, 862 | Treatment recom. |
 
-This repository has been divided into the following folders:
+   This repository has been divided into the following folders:
 
-- **preprocess**: 
-   - ```data-extraction.py```: data extraction script.
-   - ```data-preprocessing.ipynb```: task building script.
-- **baselines**: containing executable codes of baseline models.
-- **data**: containing the data extracted from MIMIC-III.
-- **evaluation**: containing evaluation scripts. (under construction :construction:)
+   - **preprocess**: 
+      - ```data-extraction.py```: data extraction script.
+      - ```data-preprocessing.ipynb```: task building script.
+   - **baselines**: containing executable codes of baseline models.
+   - **data**: containing the data extracted from MIMIC-III.
+   - **evaluation**: containing evaluation scripts. (under construction :construction:)
 
 ## Setup
 
-### Requirements
+   ### Requirements
 
-Your local system should have the following executables:
+   Your local system should have the following executables:
 
-- [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
-- [PostreSQL](http://www.postgresql.org/download/)
-- Python 3.7 or later
-- git
+   - [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html)
+   - [PostreSQL](http://www.postgresql.org/download/)
+   - Python 3.7 or later
+   - git
 
-### Create conda environment
+   ### Create conda environment
 
-All instructions below should be executed from a terminal.
+   All instructions below should be executed from a terminal.
 
-1. clone this repository and run 
-```bash
-cd ClinTS_HII
-```
-2. creates an environment ```clints-hii```
-```bash
-conda env create -n clints-hii python=3.7
-```
-3. install the required Python modules using file [requirements.txt](requirements.txt)
-```bash
-pip install -r requirements.txt
-```
+   1. clone this repository and run 
+   ```bash
+   cd ClinTS_HII
+   ```
+   2. creates an environment ```clints-hii``` and activate it.
+   ```bash
+   conda env create -n clints-hii python=3.7
+   conda activate clints-hii
+   ```
+   3. install the required Python modules using file [requirements.txt](requirements.txt)
+   ```bash
+   pip install -r requirements.txt
+   ```
 
 ## Download Data & Task Building
 
-### 0. Access to MIMIC-III data
+   ### 0. Access to MIMIC-III data
 
-   1. First you need to have an access to MIMIC-III Dataset which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
+   1. First you need to have an access to MIMIC-III Dataset, which can be requested [here](https://mimic.physionet.org/gettingstarted/access/). 
    2. Download the MIMIC-III Clinical Database and place the MIMIC-III Clinical Database as either .csv or .csv.gz files somewhere on your local computer.
 
-### 1. Create MIMIC-III in a local Postgres database
+   ### 1. Create MIMIC-III in a local Postgres database
 
-      Follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
+   Follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
 
 
-### 2. Generate datasets
+   ### 2. Generate datasets
 
    Once the database has been created, run the data extraction script to extract vital signal and intervention features from MIMIC-III.
 
@@ -79,7 +80,7 @@ pip install -r requirements.txt
 
 ## Baselines
 
-### Custom training
+   ### Custom training
 
    To run the GRU-HII baseline proposes in this paper, using the 
 
@@ -102,8 +103,10 @@ pip install -r requirements.txt
    - ```least-winsize```: 
    - ```causal-masking```: using causal mask to distinguish interventions and measurements or not.
    - ```seed```: the seed for parameter initialization.
+   
 
-### Reproduce experiments from the paper
+
+   ### Reproduce experiments from the paper
 
    If you are interested in reproducing the experiments from the paper, you can directly use the scripts in ```./baselines/```. 
 
