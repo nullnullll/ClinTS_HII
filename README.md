@@ -77,8 +77,19 @@
                                              --host [host] --password [password] \
                                              --search_path [search_path]
       ```
-   2. To build CIP task, please obtain file ```all_hourly_data.h5``` from [MIMIC_Extract](https://github.com/MLforHealth/MIMIC_Extract) first, and place it in the ```./data/``` folder.
-   3. As step 1, run file [data-preprocessing.py](./preprocess/data-preprocessing.py) to build tasks:
+   2. Clone github repository [MIT-LCP](https://github.com/MIT-LCP/mimic-code) to a directory ```$MIMIC_CODE_DIR```, following
+      ```bash
+      cd $MIMIC_CODE_DIR/mimic-iii/concepts
+      psql -d mimic -f postgres-functions.sql
+      bash postgres_make_concepts.sh
+      ```
+   3. Run
+      ```bash
+      cd ./preprocess/proc_util/resource
+      psql -d mimic -f niv-durations.sql
+      bash postgres_make_extended_concepts.sh
+      ```
+   4. As step 1, run file [data-preprocessing.py](./preprocess/data-preprocessing.py) to build tasks:
       ```bash
       python ./preprocess/data-preprocessing.py --dbname [dbname] --user [user_name] \
                                                 --host [host] --password [password] \
@@ -125,6 +136,7 @@
    ### Reproduce experiments from the paper
 
    If you are interested in reproducing the experiments from the paper, you can directly use the scripts in ```./baselines/```. 
+   Part of the baselines' code will be released later. For more information, please visit their original repo.
 
    - [AdaCare](https://github.com/Accountable-Machine-Intelligence/AdaCare)
    - [HiTANet](https://github.com/HiTANet2020/HiTANet)
