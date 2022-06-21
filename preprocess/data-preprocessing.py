@@ -1,5 +1,5 @@
 '''
-Part of this script is modified upon MIMIC-Extract (https://github.com/MLforHealth/MIMIC_Extract) and IP-Nets (https://github.com/mlds-lab/interp-net).
+Part of this script is modified upon IP-Nets (https://github.com/mlds-lab/interp-net).
 '''
 
 import pickle
@@ -16,7 +16,6 @@ random.seed(49297)
 from tqdm import tqdm, trange
 import sys
 import math
-
 from matplotlib import pyplot as plt
 from matplotlib.pyplot import MultipleLocator
 import matplotlib.dates as mdates
@@ -308,14 +307,19 @@ def data_shuffling(vitals, adm_id_needed, label):
 if __name__ == '__main__':
     
     ####### Obtaining data from database #######
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dbname', type=str, default='mimic')
+    parser.add_argument('--user', type=str, default='postgres')
+    parser.add_argument('--host', type=str, default='localhost')
+    parser.add_argument('--password', type=str, default='postgres')
+    parser.add_argument('--search_path', type=str, default='mimiciii')
+    args = parser.parse_args()
+
+    # Replace this with your mimic iii database details
     print("connecting database...")
-    try:
-        # connect to your database. Set the following parameters according to your configuration.
-        conn = py.connect(
-            "dbname = 'mimic3' user = 'user_name' host = 'localhost' password = 'password' options='-c search_path=dataset_name' ")
-        print("connect done")
-    except:
-        print("Please config PostgreSQL database parameters according to your configuration. See https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres for more details.")
+    connect_str = "dbname=" + args.dbname + " user=" + args.user + " host=" + args.host + " password=" + args.password + " options=--search_path=" + args.search_path
+    print(connect_str)
+    conn = py.connect(connect_str)
 
     cur = conn.cursor()
     # load icu stay

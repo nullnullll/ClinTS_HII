@@ -46,12 +46,12 @@
    ```bash
    cd ClinTS_HII
    ```
-   2. creates an environment ```clints-hii``` and activate it.
+   2. create an environment ```clints-hii``` and activate it.
    ```bash
    conda create -n clints-hii python=3.7
    conda activate clints-hii
    ```
-   3. install the required Python modules using file [requirements.txt](requirements.txt)
+   3. install the required Python modules using file [requirements.txt](requirements.txt).
    ```bash
    pip install -r requirement.txt
    ```
@@ -71,21 +71,18 @@
 
    ### III. Generate datasets
 
-   0. Once the database has been created, make sure the database server is running. Then, replace the connect information with your mimic iii database details first in file [data_extraction.py](./preprocess/data_extraction.py) (See [here](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) for more details).
+   1. Once the database has been created, make sure the database server is running. Then, run the file [data_extraction.py](./preprocess/data_extraction.py) with your PostgreSQL database parameters to extract vital signal and intervention features from MIMIC-III (See [here](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) for more details).
       ```bash
-      conn = py.connect(
-      "dbname = 'dbname' user = 'user_name' host = 'localhost' password = 'password' options='-c search_path=search_path' ")
-      ```
-   1. Run the data extraction script to extract vital signal and intervention features from MIMIC-III.
-      ```bash
-      python ./preprocess/data-extraction.py
+      python ./preprocess/data-extraction.py --dbname [dbname] --user [user_name] \
+                                             --host [host] --password [password] \
+                                             --search_path [search_path]
       ```
    2. To build CIP task, please obtain file ```all_hourly_data.h5``` from [MIMIC_Extract](https://github.com/MLforHealth/MIMIC_Extract) first, and place it in the ```./data/``` folder.
-   3. Config PostgreSQL database parameters in file [data-preprocessing.py](./preprocess/data-preprocessing.py)
-   according to your configuration as in step 0.
-   4. Run following command to build tasks:
+   3. As step 1, run file [data-preprocessing.py](./preprocess/data-preprocessing.py) to build tasks:
       ```bash
-      python ./preprocess/data-preprocessing.py
+      python ./preprocess/data-preprocessing.py --dbname [dbname] --user [user_name] \
+                                                --host [host] --password [password] \
+                                                --search_path [search_path]
       ```
 
    You can also read [data-preprocessing.ipynb](preprocess/data-preprocessing.ipynb) for more data processing and task statistics details.

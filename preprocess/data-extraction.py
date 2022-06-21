@@ -1,10 +1,31 @@
+'''
+Part of this script is modified upon MIMIC-Extract (https://github.com/MLforHealth/MIMIC_Extract) and IP-Nets (https://github.com/mlds-lab/interp-net).
+'''
+
 import pickle
 import psycopg2 as py
+import argparse
+import os
+import tqdm
+from tqdm import trange
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--dbname', type=str, default='mimic')
+parser.add_argument('--user', type=str, default='postgres')
+parser.add_argument('--host', type=str, default='localhost')
+parser.add_argument('--password', type=str, default='postgres')
+parser.add_argument('--search_path', type=str, default='mimiciii')
+args = parser.parse_args()
 
+if not os.path.exists("./data/"):
+    os.mkdir("./data/")
+    print("create ./data/ folder")
+
+print("connecting database...")
 # Replace this with your mimic iii database details
-conn = py.connect(
-    "dbname = 'dbname' user = 'user_name' host = 'localhost' password = 'password' options='-c search_path=search_path' ")
+connect_str = "dbname=" + args.dbname + " user=" + args.user + " host=" + args.host + " password=" + args.password + " options=--search_path=" + args.search_path
+print(connect_str)
+conn = py.connect(connect_str)
 
 cur = conn.cursor()
 cur.execute("""select hadm_id from admissions """)
@@ -15,11 +36,11 @@ cur.execute("select hadm_id, admission_type, trunc(extract(epoch from " +
 length_of_stay = cur.fetchall()
 pickle.dump(length_of_stay, open('./data/adm_type_los_mortality.p', 'wb'))
 
-
+print("save hadm_id done.\n Begin extraction. It will take a while....")
 data = []
 
-for id in range(len(list_adm_id)):
-    print("len:"+str(len(list_adm_id)),id, list_adm_id[id][0])
+for id in trange(len(list_adm_id)):
+    # print("len:"+str(len(list_adm_id)),id, list_adm_id[id][0])
     patient = []
 
     # print("Sp02")
