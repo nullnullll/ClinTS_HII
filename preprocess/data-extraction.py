@@ -40,8 +40,7 @@ pickle.dump(length_of_stay, open(data_tmp_folder + 'adm_type_los_mortality.p', '
 print("save hadm_id done, begin extraction...")
 data = []
 
-# for id in trange(len(list_adm_id)):
-for id in trange(200):
+for id in trange(len(list_adm_id)):
     # print("len:"+str(len(list_adm_id)),id, list_adm_id[id][0])
     patient = []
 

@@ -102,8 +102,9 @@
    For each task, we randomly split 20% of the collected data into the testing set, 20% of the remaining part into the validation set, and left the rest for the training set.
    After building the tasks, please run the following command for data splitting.
    ```bash
-   python ./preprocess/data_split.py --path path/to/task_data_folder/
+   python ./preprocess/data-split.py --task [task_name]
    ```
+   - ```--task```: select from ```["in_hospital_mortality", "decom", "cip", "wbm", "los"]```. If not assigned, this script will conduct data splitting for all the tasks.
 
    After task building and data splitting, the ```./data/``` folder looks like:
    ```
@@ -134,19 +135,11 @@
    │   │   ├── input.npy
    │   │   ├── vaso_output.npy
    │   │   ├── vent_output.npy
-   │   │   ├── split
-   │   │   │   ├── train_sub_adm_icu_idx.p
-   │   │   │   ├── train_input.npy
-   │   │   │   ├── vaso_train_output.npy
-   │   │   │   ├── vent_train_output.npy
-   │   │   │   ├── val_sub_adm_icu_idx.p
-   │   │   │   ├── val_input.npy
-   │   │   │   ├── vaso_val_output.npy
-   │   │   │   ├── vent_val_output.npy
-   │   │   │   ├── test_sub_adm_icu_idx.p
-   │   │   │   ├── test_input.npy
-   │   │   │   ├── vaso_test_output.npy
-   │   │   │   ├── vent_test_output.npy
+   │   │   ├── split_vent
+   │   │   │   ├── ...
+   │   │   ├── split_vaso
+   │   │   │   ├── ...
+
    ```
    The ```./tmp``` folder contains data extracted from MIMIC-III, and task folders (e.g. ```in_hospital_mortality```) contain the data for downstream tasks, which models can directly load. Note that the ```./cip``` folder is slightly different from other tasks since it includes two subtasks, i.e., *mechanical ventilation prediction* and *vasopressor prediction*.
    
