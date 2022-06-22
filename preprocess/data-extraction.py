@@ -1,6 +1,3 @@
-'''
-Part of this script is modified upon MIMIC-Extract (https://github.com/MLforHealth/MIMIC_Extract) and IP-Nets (https://github.com/mlds-lab/interp-net).
-'''
 
 import pickle
 import psycopg2 as py
@@ -20,8 +17,12 @@ args = parser.parse_args()
 if not os.path.exists("./data/"):
     os.mkdir("./data/")
     print("create ./data/ folder")
+    
+data_tmp_folder = "./data/tmp/"
+if not os.path.isdir(data_tmp_folder):
+    os.mkdir(data_tmp_folder)
+    print(data_tmp_folder, " folder created")
 
-print("connecting database...")
 # Replace this with your mimic iii database details
 connect_str = "dbname=" + args.dbname + " user=" + args.user + " host=" + args.host + " password=" + args.password + " options=--search_path=" + args.search_path
 print(connect_str)
@@ -34,12 +35,13 @@ list_adm_id = cur.fetchall()
 cur.execute("select hadm_id, admission_type, trunc(extract(epoch from " +
             "dischtime- admittime)/3600), hospital_expire_flag from admissions ")
 length_of_stay = cur.fetchall()
-pickle.dump(length_of_stay, open('./data/adm_type_los_mortality.p', 'wb'))
+pickle.dump(length_of_stay, open(data_tmp_folder + 'adm_type_los_mortality.p', 'wb'))
 
-print("save hadm_id done.\n Begin extraction. It will take a while....")
+print("save hadm_id done, begin extraction...")
 data = []
 
-for id in trange(len(list_adm_id)):
+# for id in trange(len(list_adm_id)):
+for id in trange(200):
     # print("len:"+str(len(list_adm_id)),id, list_adm_id[id][0])
     patient = []
 
@@ -329,5 +331,5 @@ for id in trange(len(list_adm_id)):
 
     data.append(patient)
 
-
-pickle.dump(data, open('./data/patient_records.p', 'wb'))
+pickle.dump(data, open(data_tmp_folder + 'patient_records.p', 'wb'))
+print("extract done, save to ", data_tmp_folder, "patient_records.p")

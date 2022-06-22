@@ -66,7 +66,7 @@
 
    ### II. Create MIMIC-III in a local Postgres database
 
-   Follow the [scripts](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data.  
+   Follow the [MIT-LCP](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres) to create a database to host the MIMIC-III data. 
 
 
    ### III. Generate datasets
@@ -77,25 +77,25 @@
                                              --host [host] --password [password] \
                                              --search_path [search_path]
       ```
-   2. Clone github repository [MIT-LCP](https://github.com/MIT-LCP/mimic-code) to a directory ```$MIMIC_CODE_DIR```, following
+      If you do not modify any configuration when building Postgres database following [MIT-LCP](https://github.com/MIT-LCP/mimic-code/tree/main/mimic-iii/buildmimic/postgres), just run ```python ./preprocess/data-extraction.py```.
+   2. Build ```public``` data scheme for MIMIC-III. Suppose the repository [MIT-LCP](https://github.com/MIT-LCP/mimic-code) is placed in directory ```$MIMIC_CODE_DIR```, following
       ```bash
       cd $MIMIC_CODE_DIR/mimic-iii/concepts
       psql -d mimic -f postgres-functions.sql
       bash postgres_make_concepts.sh
       ```
-   3. Run
+   3. Build views for feature extraction, which is the same as in [MIMIC-Extract](https://github.com/MLforHealth/MIMIC_Extract).
       ```bash
       cd ./preprocess/proc_util/resource
       psql -d mimic -f niv-durations.sql
       bash postgres_make_extended_concepts.sh
       ```
-   4. As step 1, run file [data-preprocessing.py](./preprocess/data-preprocessing.py) to build tasks:
+   4. Run file [data-preprocessing.py](./preprocess/data-preprocessing.py) to build tasks:
       ```bash
       python ./preprocess/data-preprocessing.py --dbname [dbname] --user [user_name] \
                                                 --host [host] --password [password] \
                                                 --search_path [search_path]
       ```
-
    You can also read [data-preprocessing.ipynb](preprocess/data-preprocessing.ipynb) for more data processing and task statistics details.
 
    ### IV. Data splitting
@@ -103,6 +103,56 @@
    After building the tasks, please run the following command for data splitting.
    ```bash
    python ./preprocess/data_split.py --path path/to/task_data_folder/
+   ```
+
+   After task building and data splitting, the ```./data/``` folder looks like:
+   ```
+   ├── data
+   │   ├── tmp
+   │   │   ├── adm_type_los_mortality.p
+   │   │   ├── patient_records.p
+   │   │   ├── cip_hourly_data.h5
+   │   ├── in_hospital_mortality
+   │   │   ├── sub_adm_icu_idx.p
+   │   │   ├── input.npy
+   │   │   ├── output.npy
+   │   │   ├── split
+   │   │   │   ├── train_sub_adm_icu_idx.p
+   │   │   │   ├── train_input.npy
+   │   │   │   ├── train_output.npy
+   │   │   │   ├── val_sub_adm_icu_idx.p
+   │   │   │   ├── val_input.npy
+   │   │   │   ├── val_output.npy
+   │   │   │   ├── test_sub_adm_icu_idx.p
+   │   │   │   ├── test_input.npy
+   │   │   │   ├── test_output.npy
+   │   ├── decom
+   │   ├── los
+   │   ├── wbm
+   │   ├── cip
+   │   │   ├── sub_adm_icu_idx.p
+   │   │   ├── input.npy
+   │   │   ├── vaso_output.npy
+   │   │   ├── vent_output.npy
+   │   │   ├── split
+   │   │   │   ├── train_sub_adm_icu_idx.p
+   │   │   │   ├── train_input.npy
+   │   │   │   ├── vaso_train_output.npy
+   │   │   │   ├── vent_train_output.npy
+   │   │   │   ├── val_sub_adm_icu_idx.p
+   │   │   │   ├── val_input.npy
+   │   │   │   ├── vaso_val_output.npy
+   │   │   │   ├── vent_val_output.npy
+   │   │   │   ├── test_sub_adm_icu_idx.p
+   │   │   │   ├── test_input.npy
+   │   │   │   ├── vaso_test_output.npy
+   │   │   │   ├── vent_test_output.npy
+   ```
+   The ```./tmp``` folder contains data extracted from MIMIC-III, and task folders (e.g. ```in_hospital_mortality```) contain the data for downstream tasks, which models can directly load. Note that the ```./cip``` folder is slightly different from other tasks since it includes two subtasks, i.e., *mechanical ventilation prediction* and *vasopressor prediction*.
+   
+   To enable extended research, we keep the patient ID, hospital admission ID, and corresponding ICU-stay ID for each piece of data in file ```sub_adm_icu_idx.p```:
+   ```bash
+   [(PATIENT_ID, ADMISSION_ID, ICUSTAY_ID),...]
    ```
 
 ## Baselines
@@ -119,7 +169,6 @@
                                        --sample-times 5 --least-winsize 0.5 \
                                        --causal-masking --seed 0
    ```
-
 
    - ```task```: the downstram task name, select from ```[in_hospital_mortality, decom, cip, wbm, los]```
    - ```cip```: assigning the sub-tsak of CIP task if set ```--task cip```, select from ```[vent, vaso]```

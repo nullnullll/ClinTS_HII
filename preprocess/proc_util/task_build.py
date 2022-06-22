@@ -1,6 +1,8 @@
 import sys
 import numpy as np
 from tqdm import tqdm, trange
+import pandas as pd
+import math
 
 def create_decompensation(data, icu_dict, los_dict, adm2deathtime_dict, adm2subj_dict, adm_ids, label, sample_rate=1.0, shortest_length=4.0, eps=1e-6, future_time_interval=24.0, start=0, end=10000, need_sample=-1):
     adm_icu_id = []
@@ -32,7 +34,11 @@ def create_decompensation(data, icu_dict, los_dict, adm2deathtime_dict, adm2subj
 
             los = 24.0 * los_dict[str(adm_ids[i])+'_'+str(icustay_id)]  # in hours
 
-            deathtime = adm2deathtime_dict[adm_ids[i]]
+            if adm_ids[i] in adm2deathtime_dict:
+                deathtime = adm2deathtime_dict[adm_ids[i]]
+            else:
+                deathtime = None
+                
             intime = icu_dict[adm_ids[i]][icustay_id][0]
             outtime = icu_dict[adm_ids[i]][icustay_id][1]
 
@@ -177,7 +183,11 @@ def create_wbm(data, icu_dict, los_dict, adm2deathtime_dict, adm2subj_dict, adm_
 
             los = 24.0 * los_dict[str(adm_ids[i])+'_'+str(icustay_id)]  # in hours
 
-            deathtime = adm2deathtime_dict[adm_ids[i]]
+            if adm_ids[i] in adm2deathtime_dict:
+                deathtime = adm2deathtime_dict[adm_ids[i]]
+            else:
+                deathtime = None
+            
             intime = icu_dict[adm_ids[i]][icustay_id][0]
             outtime = icu_dict[adm_ids[i]][icustay_id][1]
 
@@ -247,11 +257,14 @@ def create_interv_pred(data, icu_dict, los_dict, adm2subj_dict, adm2deathtime_di
                 continue
 
             adm_index = (adm2subj_dict[adm_ids[i]], adm_ids[i], icustay_id)
-            
 
             los = 24.0 * los_dict[str(adm_ids[i])+'_'+str(icustay_id)]  # in hours
 
-            deathtime = adm2deathtime_dict[adm_ids[i]]
+            if adm_ids[i] in adm2deathtime_dict:
+                deathtime = adm2deathtime_dict[adm_ids[i]]
+            else:
+                deathtime = None
+
             intime = icu_dict[adm_ids[i]][icustay_id][0]
             outtime = icu_dict[adm_ids[i]][icustay_id][1]
 

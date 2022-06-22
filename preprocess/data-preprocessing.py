@@ -1,38 +1,22 @@
 '''
-Part of this script is modified upon IP-Nets (https://github.com/mlds-lab/interp-net).
+Part of this script is modified upon MIMIC-Extract (https://github.com/MLforHealth/MIMIC_Extract) and IP-Nets (https://github.com/mlds-lab/interp-net).
 '''
 
 import pickle
 import psycopg2 as py
 import copy
 import numpy as np
-import torch
 import os
 import argparse
 import pandas as pd
-from datetime import datetime
 import random
 random.seed(49297)
 from tqdm import tqdm, trange
-import sys
-import math
-from matplotlib import pyplot as plt
-from matplotlib.pyplot import MultipleLocator
-import matplotlib.dates as mdates
 import pickle 
 
-from preprocess.task_build import *
-
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score
-from sklearn.metrics import log_loss
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import f1_score
-from sklearn.metrics import average_precision_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import label_binarize
-from sklearn.ensemble import RandomForestClassifier
-import scipy.stats as ss
+import proc_util
+from proc_util.task_build import *
+from proc_util.extract_cip_label import *
 
 min_time_period = 48
 
@@ -91,13 +75,24 @@ def load_data(data_path, adm_info, adm_id_needed=None):
         adm_id_needed = [record[0] for record in adm_info if record[2] >= min_time_period]
 
     vitals_dict = {}
-    for i in range(len(adm_id)):
+    for i in range(len(vitals)):
         vitals_dict[adm_id[i]] = vitals[i]
 
-    vitals = [vitals_dict[x] for x in adm_id_needed]
-    label = [rec[3] for x in adm_id_needed for rec in adm_info if x == rec[0]]
+    vitals = []
+    label = []
+    adm_id__vital = []
+    for x in adm_id_needed:
+        if x in vitals_dict:
+            vitals.append(vitals_dict[x])
+            adm_id__vital.append(x)
+            for rec in adm_info:
+                if x == rec[0]:
+                    label.append(rec[3])
+                    break
 
-    return vitals, label
+    assert len(vitals) == len(label)
+
+    return adm_id__vital, vitals, label
 
 def select_features(data):
     for i in range(len(data)):
@@ -257,11 +252,14 @@ def save_xy(in_x,in_m,in_T, label, save_path):
 
 def preproc_xy(adm_icu_id, data_x, data_y, shortest_length, dataset_name):
 
-    out_value, out_timestamps, out_rawdata, out_rawtimestamps = trim_los(data_x, shortest_length)
+    out_value, out_timestamps, _, _ = trim_los(data_x, shortest_length)
 
     x, m, T = fix_input_format(out_value, out_timestamps)
     print("timestamps format processing success")
 
+    if not os.path.isdir(dataset_name):
+        os.mkdir(dataset_name)
+    
     pickle.dump(adm_icu_id, open(dataset_name + 'sub_adm_icu_idx.p', 'wb'))
     save_xy(x, m, T, data_y, dataset_name)
     
@@ -282,11 +280,14 @@ def save_interv_xy(in_x,in_m,in_T, vent_label, vaso_label, save_path):
 
 def preproc_interv_xy(adm_icu_id, data_x, vent_label, vaso_label, shortest_length, dataset_name):
 
-    out_value, out_timestamps, out_rawdata, out_rawtimestamps = trim_los(data_x, shortest_length)
+    out_value, out_timestamps, _, _ = trim_los(data_x, shortest_length)
 
     x, m, T = fix_input_format(out_value, out_timestamps)
     print("timestamps format processing success")
-
+    
+    if not os.path.isdir(dataset_name):
+        os.mkdir(dataset_name)
+        
     pickle.dump(adm_icu_id, open(dataset_name + 'sub_adm_icu_idx.p', 'wb'))
     save_interv_xy(x, m, T, vent_label, vaso_label, dataset_name)
     
@@ -305,7 +306,13 @@ def data_shuffling(vitals, adm_id_needed, label):
     return vitals, adm_id_needed, label 
 
 if __name__ == '__main__':
+    data_tmp_folder = "./data/tmp/"
+    adm_id_data_path = data_tmp_folder + "adm_type_los_mortality.p"
+    bio_path = data_tmp_folder + "patient_records.p"
+    interv_outPath = data_tmp_folder + "cip_hourly_data.h5"
+    resource_path = "./preprocess/proc_util/resource/"
     
+
     ####### Obtaining data from database #######
     parser = argparse.ArgumentParser()
     parser.add_argument('--dbname', type=str, default='mimic')
@@ -315,7 +322,6 @@ if __name__ == '__main__':
     parser.add_argument('--search_path', type=str, default='mimiciii')
     args = parser.parse_args()
 
-    # Replace this with your mimic iii database details
     print("connecting database...")
     connect_str = "dbname=" + args.dbname + " user=" + args.user + " host=" + args.host + " password=" + args.password + " options=--search_path=" + args.search_path
     print(connect_str)
@@ -347,12 +353,10 @@ if __name__ == '__main__':
     print("load ", str(len(adm2deathtime_dict)), " deathtime data")
     
     ####### Load data #######
-    adm_id_data_path = "./data/adm_type_los_mortality.p"
     adm_info, adm_id_needed = load_adm_data(adm_id_data_path)
     
     # load biomarkers and events
-    bio_path = "./data/patient_records.p"
-    vitals, label = load_data(bio_path, adm_info, adm_id_needed=adm_id_needed)
+    adm_id_needed, vitals, label = load_data(bio_path, adm_info, adm_id_needed=adm_id_needed)
     
     # select features
     select_features(vitals)
@@ -369,14 +373,14 @@ if __name__ == '__main__':
     
     mor_adm_icu_id, mor_data, mor_label = adm_id_needed, vitals, label
     
-    preproc_xy(mor_adm_icu_id, mor_data, mor_label, 48, 'in_hospital_mortality/')
+    preproc_xy(mor_adm_icu_id, mor_data, mor_label, 48, './data/in_hospital_mortality/')
     
     #==== Decompensation ====
     print("building Decompensation task...")
     
     decom_adm_icu_id, decom_data, decom_label = create_decompensation(vitals, icu_dict, los_dict, adm2deathtime_dict, adm2subj_dict, adm_id_needed, label, sample_rate=6.0, shortest_length=12.0, future_time_interval=24.0, start=0, end=len(adm_id_needed), need_sample=-1)
     
-    preproc_xy(decom_adm_icu_id, decom_data, decom_label, 12, 'decom/')
+    preproc_xy(decom_adm_icu_id, decom_data, decom_label, 12, './data/decom/')
     
     
     #==== Length of Stay ====
@@ -384,25 +388,28 @@ if __name__ == '__main__':
     
     los_adm_icu_id, los_data, los_label = create_los(vitals, icu_dict, los_dict, adm2subj_dict, adm_id_needed, label, sample_rate=12, shortest_length=24, eps=1e-6, start=0, end=len(adm_id_needed), need_sample=-1)
     
-    preproc_xy(los_adm_icu_id, los_data, los_label, 48, 'los/')
+    preproc_xy(los_adm_icu_id, los_data, los_label, 48, './data/los/')
     
     #==== Next Timepoint Will be Measured ====
     print("building Next Timepoint Will be Measured task...")
     
     wbm_adm_icu_id, wbm_data, wbm_label = create_wbm(vitals, icu_dict, los_dict, adm2deathtime_dict, adm2subj_dict, adm_id_needed, sample_rate=12.0, observ_win=48.0, eps=1e-6, future_time_interval=1.0, start=0, end=len(adm_id_needed), need_sample=-1)
     
-    preproc_xy(wbm_adm_icu_id, wbm_data, wbm_label, 48, 'wbm/')
+    preproc_xy(wbm_adm_icu_id, wbm_data, wbm_label, 48, './data/wbm/')
     
     #==== Clinical Intervention Prediction ====
     print("building Clinical Intervention Prediction task...")
-    # Please obtain this file from https://github.com/MLforHealth/MIMIC_Extract
-    DATAFILE = './data/all_hourly_data.h5'
-    Y = pd.read_hdf(DATAFILE,'interventions')
+    
+    if not os.path.isfile(interv_outPath):
+        extract_cip_data(resource_path, interv_outPath, args.dbname, args.search_path, args.host, args.user, args.password)
+    
+    print("Loading files from ", interv_outPath)
+    Y = pd.read_hdf(interv_outPath,'interventions')
     Y = Y[['vent', 'vaso']]
     
-    cip_adm_icu_id, cip_data, vent_labels, vaso_labels = create_interv_pred(vitals, icu_dict, los_dict, adm2subj_dict, adm2deathtime_dict, adm_id_needed, Y, sample_rate=6, observ_win=6, eps=1e-6, future_time_interval=4, gap_win=6, start=0, end=len(adm_id_needed), need_sample=-1)
+    cip_adm_icu_id, cip_data, vent_labels, vaso_labels = create_interv_pred(vitals, icu_dict, los_dict, adm2subj_dict, adm2deathtime_dict, adm_id_needed, Y, sample_rate=6, observ_win=6, eps=1e-6, future_time_interval=4, gap_win=6, start=0, end=len(vitals), need_sample=-1)
     
-    preproc_interv_xy(cip_adm_icu_id, cip_data, vent_labels, vaso_labels, 48, 'cip/')
+    preproc_interv_xy(cip_adm_icu_id, cip_data, vent_labels, vaso_labels, 48, './data/cip/')
     
     
     print("build all the task done.")
