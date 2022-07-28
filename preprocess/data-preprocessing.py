@@ -50,7 +50,7 @@ def load_adm2deathtime(deathtimes):
     for hadm_id, deathtime in deathtimes:
         if hadm_id not in adm2deathtime_dict:
             adm2deathtime_dict.update({hadm_id:deathtime})
-    return deathtimes
+    return adm2deathtime_dict
 
 
 def load_adm_data(data_path):
@@ -134,18 +134,15 @@ def trim_los(data, shortest_length=48):
     timestamps, rawdata, rawtimestamps = [], [], []
 
     for i in range(len(data)):
-        l = []
+        TS = []
         # taking union of all time stamps,
-        # we don't actually need this for our model
+        # keeping only unique elements
         for j in range(num_features):
             for k in range(len(data[i][j])):
-                l.append(data[i][j][k][0])
+                tmp_t = data[i][j][k][0]
+                if tmp_t not in TS:
+                    TS.append(data[i][j][k][0])
 
-        # keeping only unique elements
-        TS = []
-        for j in l:
-            if j not in TS:
-                TS.append(j)
         TS.sort()
 
         temp = []

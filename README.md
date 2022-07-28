@@ -25,7 +25,7 @@
       - ```data-preprocessing.ipynb```: task building script.
    - **baselines**: containing executable codes of baseline models.
    - **data**: containing the data extracted from MIMIC-III.
-   - **evaluation**: containing evaluation scripts. (under construction :construction:)
+   - **evaluation**: containing evaluation scripts. 
 
 ## Setup
 
@@ -208,7 +208,7 @@
 
 ## Evaluation
 
-Under construction :construction:
+This benchmark adopts [AUROC](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html) and [AUPRC](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.average_precision_score.html) as two major evaluation metrics. We will update the evaluation script soon.
 
 ## License
 
